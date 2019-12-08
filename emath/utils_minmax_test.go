@@ -1,4 +1,4 @@
-package utils
+package emath
 
 import (
 	"github.com/stretchr/testify/assert"

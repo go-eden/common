@@ -1,4 +1,4 @@
-package utils
+package emath
 
 // MinInt find and return the minimum item from the specified int
 func MinInt(nums ...int) int {
