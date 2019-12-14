@@ -20,7 +20,7 @@ func NowMillisecond() int64 {
 	if err := syscall.Gettimeofday(&tv); err != nil {
 		return time.Now().UnixNano() / 1e6
 	}
-	return tv.Sec*1e3 + int64(tv.Usec)/1e3
+	return int64(tv.Sec)*1e3 + int64(tv.Usec)/1e3
 }
 
 // NowMicrosecond obtains the current microsecond, use syscall for better performance
@@ -29,5 +29,5 @@ func NowMicrosecond() int64 {
 	if err := syscall.Gettimeofday(&tv); err != nil {
 		return time.Now().UnixNano() / 1e3
 	}
-	return tv.Sec*1e6 + int64(tv.Usec)
+	return int64(tv.Sec)*1e6 + int64(tv.Usec)
 }
