@@ -21,6 +21,31 @@ func TestNow(t *testing.T) {
 	if micro1 > micro2+1 || micro2 > micro1+1 {
 		t.FailNow()
 	}
+
+	us1 := NowUs()
+	us2 := time.Now().UnixNano() / 1e3
+	if us1 > us2+1 || us2 > us1+1 {
+		t.FailNow()
+	}
+
+	ms1 = NowMs()
+	ms2 = time.Now().UnixNano() / 1e6
+	if ms2 > ms1+1 || ms1 > ms2+1 {
+		t.FailNow()
+	}
+
+	ns1 := NowNs()
+	ns2 := time.Now().UnixNano()
+	if ns1 > ns2 {
+		t.FailNow()
+	}
+}
+
+func TestUptimeMs(t *testing.T) {
+	us := UptimeUs()
+	ms := UptimeMs()
+	t.Log(us)
+	t.Log(ms)
 }
 
 func BenchmarkNowSecond(b *testing.B) {
