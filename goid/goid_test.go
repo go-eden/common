@@ -5,6 +5,25 @@ import (
 	"testing"
 )
 
+func TestGetGoidByReflect(t *testing.T) {
+	t.Log(getGoidByReflect())
+	t.Log(getGoidByReflect())
+	t.Log(getGoidByReflect())
+}
+
+func TestGoid(t *testing.T) {
+	t.Log(getGoidByReflect())
+	t.Log(getGoidByStack())
+}
+
+// BenchmarkGetGoidByReflect-12    	886767097	         1.20 ns/op	       0 B/op	       0 allocs/op
+func BenchmarkGetGoidByReflect(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		getGoidByReflect()
+	}
+}
 func TestGid(t *testing.T) {
 	var (
 		buf [128]byte
@@ -17,6 +36,8 @@ func TestGid(t *testing.T) {
 	t.Log(getGoidByStack())
 	t.Log(getGoidByStack())
 	t.Log(getGoidByStack())
+
+	t.Log(getGoidByReflect())
 }
 
 // BenchmarkGetGoid-12    	  370731	      3173 ns/op	     176 B/op	       3 allocs/op
