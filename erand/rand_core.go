@@ -1,15 +1,16 @@
 package erand
 
 import (
-	"github.com/go-eden/common/etime"
 	"math/rand"
+	"time"
 )
 
-var gr = rand.New(rand.NewSource(etime.NowMicrosecond()))
+var gr *rand.Rand
 
-// Bytes return [n]byte which contains random data.
-func Bytes(n int) []byte {
-	data := make([]byte, n, n)
-	gr.Read(data)
-	return data
+func init() {
+	seed1 := time.Now().UnixNano()
+	seed2 := time.Now().UnixNano()
+	seed3 := time.Now().UnixNano()
+	src := rand.NewSource(seed1 | seed2 | seed3)
+	gr = rand.New(src)
 }
