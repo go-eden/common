@@ -69,6 +69,7 @@ var offsetDictMap = map[string]int64{
 	"go1.12.7":  152,
 	"go1.13":    152,
 	"go1.14":    152,
+	"go1.15":    152,
 }
 var offset uintptr
 
