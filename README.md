@@ -21,7 +21,7 @@ some math utils.
 
 ## [`esync`](./esync)
 
-Provides an implementation of `reentrant lock`.
+Provides an implementation of `reentrant lock` or `reentrant mutex`.
 
 ## [`goid`](./goid)
 
