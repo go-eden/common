@@ -1,8 +1,12 @@
 package esync
 
-import "testing"
+import (
+	"github.com/go-eden/common/goid"
+	"sync"
+	"testing"
+)
 
-func TestReMutex(t *testing.T) {
+func TestReMutex1(t *testing.T) {
 	var m ReMutex
 
 	m.Lock()
@@ -22,6 +26,44 @@ func TestReMutex(t *testing.T) {
 		m.Unlock()
 		m.Unlock()
 	}
+}
+
+func TestReMutex2(t *testing.T) {
+	var m ReMutex
+
+	const num = 10
+	const max = 500
+
+	var doneCond = sync.NewCond(&m)
+	var conds [num]*sync.Cond
+	var counter int32
+
+	for i := 0; i < num; i++ {
+		conds[i] = sync.NewCond(&m)
+		var group = int32(i)
+		go func() {
+			gid := goid.Gid()
+			for counter < max {
+				m.Lock()
+				if counter%num == group {
+					t.Log(gid, counter)
+					counter++
+					conds[counter%num].Signal() // notify next goroutine
+				} else {
+					conds[group].Wait()
+				}
+				m.Unlock()
+			}
+			doneCond.Signal()
+		}()
+	}
+	m.Lock()
+	doneCond.Wait()
+	m.Unlock()
+}
+
+func TestReMutex3(t *testing.T) {
+
 }
 
 // BenchmarkRemutex-12    	39420012	        30.5 ns/op	       0 B/op	       0 allocs/op
