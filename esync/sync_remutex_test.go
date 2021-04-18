@@ -1,8 +1,8 @@
 package esync
 
 import (
-	"github.com/go-eden/common/goid"
 	"sync"
+	"sync/atomic"
 	"testing"
 )
 
@@ -40,15 +40,18 @@ func TestReMutex2(t *testing.T) {
 
 	for i := 0; i < num; i++ {
 		conds[i] = sync.NewCond(&m)
+	}
+
+	for i := 0; i < num; i++ {
 		var group = int32(i)
 		go func() {
-			gid := goid.Gid()
-			for counter < max {
+			//gid := goid.Gid()
+			for atomic.LoadInt32(&counter) < max {
 				m.Lock()
-				if counter%num == group {
-					t.Log(gid, counter)
-					counter++
-					conds[counter%num].Signal() // notify next goroutine
+				if atomic.LoadInt32(&counter)%num == group {
+					//t.Log(gid, counter)
+					newCounter := atomic.AddInt32(&counter, 1)
+					conds[newCounter%num].Signal() // notify next goroutine
 				} else {
 					conds[group].Wait()
 				}

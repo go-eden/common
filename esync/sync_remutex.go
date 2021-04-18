@@ -19,7 +19,7 @@ func (t *ReMutex) Lock() {
 
 	if atomic.LoadInt64(&t.holder) != gid {
 		t.Mutex.Lock()
-		t.holder = gid
+		atomic.StoreInt64(&t.holder, gid)
 		t.counter = 1
 		return
 	}
@@ -38,7 +38,7 @@ func (t *ReMutex) Unlock() {
 		t.counter--
 	}
 	if t.counter == 0 {
-		t.holder = 0
+		atomic.StoreInt64(&t.holder, 0)
 		t.Mutex.Unlock()
 	}
 }
