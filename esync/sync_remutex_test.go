@@ -76,6 +76,12 @@ func BenchmarkRemutex(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		m.Lock()
 		m.Lock()
+		m.Lock()
+		m.Unlock()
+		m.Lock()
+		m.Unlock()
+		m.Unlock()
+		m.Lock()
 		m.Unlock()
 		m.Unlock()
 	}
