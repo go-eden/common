@@ -11,14 +11,17 @@ func TestAtomicBool(t *testing.T) {
 	var a AtomicBool
 
 	for i := 0; i < 100; i++ {
-		a.Set(i%2 == 0)
-		assert.True(t, a.Get() == (i%2 == 0))
+		b := i%2 == 0
+		a.Set(b)
+		assert.True(t, a.Get() == b)
+		assert.True(t, a.Swap(true) == b && a.Get() == true)
 	}
 
 	signs := make(chan bool, 2)
 	go func() {
 		for i := 0; i < 1000000; i++ {
 			a.Set(true)
+			_ = a.Swap(false)
 			a.Get()
 		}
 		signs <- true
@@ -26,6 +29,7 @@ func TestAtomicBool(t *testing.T) {
 	go func() {
 		for i := 0; i < 1000000; i++ {
 			a.Set(false)
+			_ = a.Swap(true)
 			a.Get()
 		}
 		signs <- true
@@ -35,11 +39,11 @@ func TestAtomicBool(t *testing.T) {
 	t.Log(a.String())
 }
 
-// BenchmarkAtomicBool_Set-12    	244932280	         4.863 ns/op
+// BenchmarkAtomicBool_Set-12    	216363957	         5.621 ns/op
 func BenchmarkAtomicBool_Set(b *testing.B) {
 	var a AtomicBool
 	for i := 0; i < b.N; i++ {
-		a.Set(true)
+		a.Set(i&1 == 1)
 	}
 }
 
@@ -51,6 +55,14 @@ func BenchmarkAtomicBool_Get(b *testing.B) {
 	}
 }
 
+// BenchmarkAtomicBool_Swap-12    	185458958	         6.179 ns/op
+func BenchmarkAtomicBool_Swap(b *testing.B) {
+	var a AtomicBool
+	for i := 0; i < b.N; i++ {
+		_ = a.Swap(i&1 == 1)
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 func TestAtomicFloat32(t *testing.T) {
 	var a AtomicFloat32
@@ -59,12 +71,14 @@ func TestAtomicFloat32(t *testing.T) {
 		f := rand.Float32()
 		a.Set(f)
 		assert.True(t, a.Get() == f)
+		assert.True(t, a.Swap(0) == f, a.Get() == 0)
 	}
 
 	signs := make(chan bool, 2)
 	go func() {
 		for i := 0; i < 1000000; i++ {
 			a.Set(123.45)
+			_ = a.Swap(1111111.1)
 			a.Get()
 		}
 		signs <- true
@@ -72,6 +86,7 @@ func TestAtomicFloat32(t *testing.T) {
 	go func() {
 		for i := 0; i < 1000000; i++ {
 			a.Set(2345.67)
+			_ = a.Swap(2222222.1)
 			a.Get()
 		}
 		signs <- true
@@ -81,11 +96,11 @@ func TestAtomicFloat32(t *testing.T) {
 	t.Log(a.String())
 }
 
-// BenchmarkAtomicFloat32_Set-12    	226838348	         5.043 ns/op
+// BenchmarkAtomicFloat32_Set-12    	188348179	         6.284 ns/op
 func BenchmarkAtomicFloat32_Set(b *testing.B) {
 	var a AtomicFloat32
 	for i := 0; i < b.N; i++ {
-		a.Set(123.45)
+		a.Set(float32(i))
 	}
 }
 
@@ -97,6 +112,14 @@ func BenchmarkAtomicFloat32_Get(b *testing.B) {
 	}
 }
 
+// BenchmarkAtomicFloat32_Swap-12    	189897183	         6.165 ns/op
+func BenchmarkAtomicFloat32_Swap(b *testing.B) {
+	var a AtomicFloat32
+	for i := 0; i < b.N; i++ {
+		_ = a.Swap(float32(i))
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 func TestAtomicFloat64(t *testing.T) {
 	var a AtomicFloat64
@@ -105,6 +128,7 @@ func TestAtomicFloat64(t *testing.T) {
 		f := rand.Float64()
 		a.Set(f)
 		assert.True(t, a.Get() == f)
+		assert.True(t, a.Swap(0) == f, a.Get() == 0)
 	}
 
 	signs := make(chan bool, 2)
@@ -127,11 +151,11 @@ func TestAtomicFloat64(t *testing.T) {
 	t.Log(a.String())
 }
 
-// BenchmarkAtomicFloat64_Set-12    	241627206	         4.923 ns/op
+// BenchmarkAtomicFloat64_Set-12    	183620686	         6.208 ns/op
 func BenchmarkAtomicFloat64_Set(b *testing.B) {
 	var a AtomicFloat64
 	for i := 0; i < b.N; i++ {
-		a.Set(123.45)
+		a.Set(float64(i))
 	}
 }
 
@@ -140,5 +164,13 @@ func BenchmarkAtomicFloat64_Get(b *testing.B) {
 	var a AtomicFloat64
 	for i := 0; i < b.N; i++ {
 		_ = a.Get()
+	}
+}
+
+// BenchmarkAtomicFloat64_Swap-12    	187972417	         6.227 ns/op
+func BenchmarkAtomicFloat64_Swap(b *testing.B) {
+	var a AtomicFloat64
+	for i := 0; i < b.N; i++ {
+		_ = a.Swap(float64(i))
 	}
 }

@@ -23,6 +23,16 @@ func (t *AtomicBool) Get() bool {
 	return atomic.LoadInt32(&t.value) != 0
 }
 
+func (t *AtomicBool) Swap(v bool) bool {
+	var _v int32
+	if v {
+		_v = 1
+	} else {
+		_v = 0
+	}
+	return atomic.SwapInt32(&t.value, _v) != 0
+}
+
 func (t *AtomicBool) String() string {
 	return fmt.Sprint(t.Get())
 }
@@ -40,6 +50,10 @@ func (t *AtomicFloat32) Get() float32 {
 	return math.Float32frombits(atomic.LoadUint32(&t.value))
 }
 
+func (t *AtomicFloat32) Swap(v float32) float32 {
+	return math.Float32frombits(atomic.SwapUint32(&t.value, math.Float32bits(v)))
+}
+
 func (t *AtomicFloat32) String() string {
 	return fmt.Sprint(t.Get())
 }
@@ -55,6 +69,10 @@ func (t *AtomicFloat64) Set(v float64) {
 
 func (t *AtomicFloat64) Get() float64 {
 	return math.Float64frombits(atomic.LoadUint64(&t.value))
+}
+
+func (t *AtomicFloat64) Swap(v float64) float64 {
+	return math.Float64frombits(atomic.SwapUint64(&t.value, math.Float64bits(v)))
 }
 
 func (t *AtomicFloat64) String() string {
