@@ -16,26 +16,13 @@ func TestAtomicBool(t *testing.T) {
 		assert.True(t, a.Get() == b)
 		assert.True(t, a.Swap(true) == b && a.Get() == true)
 	}
-
-	signs := make(chan bool, 2)
-	go func() {
+	multiRun(10, func() {
 		for i := 0; i < 1000000; i++ {
 			a.Set(true)
 			_ = a.Swap(false)
 			a.Get()
 		}
-		signs <- true
-	}()
-	go func() {
-		for i := 0; i < 1000000; i++ {
-			a.Set(false)
-			_ = a.Swap(true)
-			a.Get()
-		}
-		signs <- true
-	}()
-	<-signs
-	<-signs
+	})
 	t.Log(a.String())
 }
 
@@ -73,26 +60,13 @@ func TestAtomicFloat32(t *testing.T) {
 		assert.True(t, a.Get() == f)
 		assert.True(t, a.Swap(0) == f, a.Get() == 0)
 	}
-
-	signs := make(chan bool, 2)
-	go func() {
+	multiRun(10, func() {
 		for i := 0; i < 1000000; i++ {
 			a.Set(123.45)
 			_ = a.Swap(1111111.1)
 			a.Get()
 		}
-		signs <- true
-	}()
-	go func() {
-		for i := 0; i < 1000000; i++ {
-			a.Set(2345.67)
-			_ = a.Swap(2222222.1)
-			a.Get()
-		}
-		signs <- true
-	}()
-	<-signs
-	<-signs
+	})
 	t.Log(a.String())
 }
 
@@ -130,24 +104,12 @@ func TestAtomicFloat64(t *testing.T) {
 		assert.True(t, a.Get() == f)
 		assert.True(t, a.Swap(0) == f, a.Get() == 0)
 	}
-
-	signs := make(chan bool, 2)
-	go func() {
+	multiRun(10, func() {
 		for i := 0; i < 1000000; i++ {
 			a.Set(rand.Float64())
 			a.Get()
 		}
-		signs <- true
-	}()
-	go func() {
-		for i := 0; i < 1000000; i++ {
-			a.Set(rand.Float64())
-			a.Get()
-		}
-		signs <- true
-	}()
-	<-signs
-	<-signs
+	})
 	t.Log(a.String())
 }
 
