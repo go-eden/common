@@ -3,6 +3,7 @@ package etime
 import (
 	"fmt"
 	"github.com/go-eden/common/esync"
+	"runtime/debug"
 	"time"
 )
 
@@ -25,7 +26,7 @@ func NewInterval(d time.Duration, f func()) *Interval {
 func (t *Interval) exec() {
 	defer func() {
 		if e := recover(); e != nil {
-			fmt.Printf("interval func panic: %v", e)
+			fmt.Println("interval timer-func panic: \n" + string(debug.Stack()))
 		}
 		if !t.closed.Get() {
 			t.timer.Reset(t.duration)
