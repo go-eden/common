@@ -23,6 +23,14 @@ some math utils.
 
 Provides an implementation of `reentrant lock` or `reentrant mutex`.
 
+Wraps some atomic number:
+
++ `AtomicBool`
++ `AtomicInt`
++ `AtomicUint16`
++ `AtomicFloat32`
++ `AtomicFloat64`
+
 ## [`goid`](./goid)
 
 `goid` provides `Gid()` function to find `ID` of the current `goroutine`.

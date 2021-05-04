@@ -1,7 +1,6 @@
 package esync
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -28,21 +27,10 @@ func TestAtomicUint16(t *testing.T) {
 	})
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-func multiRun(concurrency int, f func()) {
-	signs := make(chan bool, concurrency)
-	for i := 0; i < concurrency; i++ {
-		go func() {
-			defer func() {
-				if e := recover(); e != nil {
-					fmt.Printf("RUN panic: %v", e)
-				}
-				signs <- true
-			}()
-			f()
-		}()
-	}
-	for i := 0; i < concurrency; i++ {
-		<-signs
+// BenchmarkAtomicUint16-12    	255484669	         4.639 ns/op
+func BenchmarkAtomicUint16(b *testing.B) {
+	var num AtomicUint16
+	for i := 0; i < b.N; i++ {
+		num.Add(i)
 	}
 }
