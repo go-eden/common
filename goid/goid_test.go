@@ -41,6 +41,15 @@ func BenchmarkGetGoidByReflect(b *testing.B) {
 	}
 }
 
+// BenchmarkGid-12    	267249897	         4.394 ns/op	       0 B/op	       0 allocs/op
+func BenchmarkGid(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = Gid()
+	}
+}
+
 // BenchmarkGetGoid-12    	  388618	      3012 ns/op	     144 B/op	       3 allocs/op
 func BenchmarkGetGoid(b *testing.B) {
 	b.ReportAllocs()
