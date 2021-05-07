@@ -3,6 +3,7 @@ package efmt
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"strconv"
 	"testing"
 )
 
@@ -42,4 +43,9 @@ func BenchmarkStdSprintf(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = fmt.Sprintf(tFormatStr, tFormatArg...)
 	}
+}
+
+func TestStrconv(t *testing.T) {
+	s := strconv.Itoa(1)
+	t.Log(s)
 }
