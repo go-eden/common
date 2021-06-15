@@ -19,6 +19,9 @@ func TestAllGoid(t *testing.T) {
 
 	sids := getAllGoidByStack()
 	t.Log("all sids: ", len(sids), sids)
+
+	ids := AllGids()
+	t.Log("all ids: ", len(ids), ids)
 }
 
 // When routineNum = 16
