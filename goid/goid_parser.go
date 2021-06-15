@@ -2,64 +2,65 @@ package goid
 
 import (
 	"fmt"
-	"regexp"
 )
 
-var pattern = regexp.MustCompile(`goroutine (\d+) \[`)
+var anchor = []byte("goroutine ")
 
-// Find the next goid from `buf`
-func findNextGoid(buf []byte) (goid int64) {
-	var matches = pattern.FindSubmatch(buf)
-	if l := len(matches); l != 2 {
-		if l != 0 {
-			fmt.Println("should never be here, any bug happens")
+// Find the next goid from `buf[off:]`
+func findNextGoid(buf []byte, off int) (goid int64, next int) {
+	i := off
+	hit := false
+	// skip to anchor
+	for sb := len(buf) - len(anchor); i < sb; {
+		if buf[i] == anchor[0] && buf[i+1] == anchor[1] &&
+			buf[i+2] == anchor[2] && buf[i+3] == anchor[3] &&
+			buf[i+4] == anchor[4] && buf[i+5] == anchor[5] &&
+			buf[i+6] == anchor[6] && buf[i+7] == anchor[7] &&
+			buf[i+8] == anchor[8] && buf[i+9] == anchor[9] {
+			hit = true
+			i += len(anchor)
+			break
 		}
-		return
-	}
-	return str2num(matches[1])
-}
-
-// Find all goids from `buf`
-func findAllGoid(buf []byte) (goids []int64) {
-	arr := pattern.FindAllSubmatch(buf, len(buf))
-	goids = make([]int64, len(arr))
-	for i := 0; i < len(arr); i++ {
-		if len(arr[i]) != 2 {
-			fmt.Println("should never be here, any bug happens")
-			continue
+		for ; i < len(buf) && buf[i] != '\n'; i++ {
 		}
-		goids[i] = str2num(arr[i][1])
+		i++
 	}
-	return
-}
-
-// Should be faster
-func str2num(buf []byte) (v int64) {
-	for i := 0; i < len(buf); i++ {
+	// return if not hit
+	if !hit {
+		return 0, len(buf)
+	}
+	// extract goid
+	var done bool
+	for ; i < len(buf) && !done; i++ {
 		switch buf[i] {
 		case '0':
-			v *= 10
+			goid *= 10
 		case '1':
-			v = v*10 + 1
+			goid = goid*10 + 1
 		case '2':
-			v = v*10 + 2
+			goid = goid*10 + 2
 		case '3':
-			v = v*10 + 3
+			goid = goid*10 + 3
 		case '4':
-			v = v*10 + 4
+			goid = goid*10 + 4
 		case '5':
-			v = v*10 + 5
+			goid = goid*10 + 5
 		case '6':
-			v = v*10 + 6
+			goid = goid*10 + 6
 		case '7':
-			v = v*10 + 7
+			goid = goid*10 + 7
 		case '8':
-			v = v*10 + 8
+			goid = goid*10 + 8
 		case '9':
-			v = v*10 + 9
+			goid = goid*10 + 9
+		case ' ':
+			done = true
+			break
 		default:
+			goid = 0
 			fmt.Println("should never be here, any bug happens")
 		}
 	}
+	next = i
 	return
 }
