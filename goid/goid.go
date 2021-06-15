@@ -90,10 +90,11 @@ func init() {
 // and could parse gid from stack for failover supporting.
 func Gid() (id int64) {
 	var succ bool
-	if id, succ = getGoidByNative(); succ {
-		return id
+	if id, succ = getGoidByNative(); !succ {
+		// no need to warning
+		id = getGoidByStack()
 	}
-	return getGoidByStack()
+	return
 }
 
 // AllGids return all goroutine's goid in the current golang process.
@@ -101,8 +102,7 @@ func Gid() (id int64) {
 // and fallover to runtime.Stack, which is realy inefficient.
 func AllGids() (ids []int64) {
 	var err error
-	ids, err = getAllGoidByNative()
-	if err != nil {
+	if ids, err = getAllGoidByNative(); err != nil {
 		fmt.Println("[WARNING] cannot get all goid from runtime natively, now fallover to stack info, this will be very inefficient!!!")
 		ids = getAllGoidByStack()
 	}
