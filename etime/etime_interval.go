@@ -19,7 +19,8 @@ func NewInterval(d time.Duration, f func()) *Interval {
 		duration: d,
 		f:        f,
 	}
-	t.timer = time.AfterFunc(d, t.exec)
+	t.timer = time.AfterFunc(time.Hour, t.exec)
+	t.timer.Reset(d)
 	return t
 }
 
