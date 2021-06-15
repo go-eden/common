@@ -1,4 +1,4 @@
-# Common util or extension
+# Common util or extension  [![Build Status](https://travis-ci.org/go-eden/common.svg?branch=master)](https://travis-ci.org/go-eden/common)
 
 This library provides some utils or extension.
 
